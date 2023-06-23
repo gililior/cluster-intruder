@@ -52,6 +52,7 @@ def register_results():
     for letter in column_map:
         if column_map[letter] in results:
             st.session_state.ws.update(letter + str(next_row_ind), results[column_map[letter]])
+    st.session_state.update_iteration = True
 
 
 def main(csv_path):
@@ -66,15 +67,15 @@ def main(csv_path):
         if -1 in clusters:
             clusters.remove(-1)
         clusters = sorted(list(clusters))
-        random.shuffle(clusters)
         st.session_state.clusters = clusters
         st.session_state.group_by_cluster = st.session_state.df.groupby("community").groups
         st.session_state.i = 0
-        st.session_state.current_cluster = None
+        st.session_state.update_iteration = True
 
     clusters = st.session_state.clusters
-    if st.session_state.i == 0 or st.session_state.current_cluster != st.session_state.clusters[st.session_state.i]:
-        st.session_state.current_cluster = clusters[st.session_state.i]
+    if st.session_state.update_iteration:
+        st.session_state.update_iteration = False
+        st.session_state.current_cluster = random.choice(clusters)
         random_cluster = random.choice([c for c in clusters if c != st.session_state.current_cluster])
         df_cluster = st.session_state.df.loc[st.session_state.group_by_cluster[st.session_state.current_cluster]]
         from_cluster = random.sample(list(df_cluster.index),
@@ -88,7 +89,7 @@ def main(csv_path):
         random.shuffle(sentences)
         st.session_state.sentences = sentences
 
-    st.progress(value=st.session_state.i / len(st.session_state.clusters))
+    st.progress(value=st.session_state.i+1)
 
     label = "WHICH SENTENCE DOES NOT BELONG TO THE CLUSTER?"
     st.radio(label, [label] + st.session_state.sentences, key="radio",
