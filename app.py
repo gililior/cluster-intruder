@@ -63,6 +63,7 @@ def main(csv_path):
         st.session_state['df'] = pd.read_csv(csv_path)
 
     if 'clusters' not in st.session_state:
+        print(st.session_state.df.headers)
         clusters = set(st.session_state.df["community"].unique())
         if -1 in clusters:
             clusters.remove(-1)
