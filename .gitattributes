@@ -1,1 +1,1 @@
-10k-large.csv filter=lfs diff=lfs merge=lfs -text
+10k.csv filter=lfs diff=lfs merge=lfs -text
