@@ -7,4 +7,4 @@ if __name__ == '__main__':
     if st.session_state.cur_page == 0:
         hello_page()
     else:
-        main("10k-large.csv")
+        main("10k.csv")
