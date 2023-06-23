@@ -51,7 +51,8 @@ def register_results():
     next_row_ind = len(st.session_state.ws.col_values(1)) + 1
     column_map = st.session_state.column_map
     for letter in column_map:
-        st.session_state.ws.update(letter + str(next_row_ind), results[column_map[letter]])
+        if column_map[letter] in results:
+            st.session_state.ws.update(letter + str(next_row_ind), results[column_map[letter]])
 
 
 def main(csv_path):
@@ -77,7 +78,8 @@ def main(csv_path):
         st.session_state.current_cluster = clusters[st.session_state.i]
         random_cluster = random.choice([c for c in clusters if c != st.session_state.current_cluster])
         df_cluster = st.session_state.df.loc[st.session_state.group_by_cluster[st.session_state.current_cluster]]
-        from_cluster = random.sample(list(df_cluster.index), k=SAMPLE_SIZE-1)
+        from_cluster = random.sample(list(df_cluster.index),
+                                     k=min(len(df_cluster), SAMPLE_SIZE-1))
         st.session_state.indices_cluster = from_cluster
         sentences = df_cluster.loc[from_cluster]["title_text"].tolist()
         assert len(df_cluster.loc[from_cluster]["community"].unique()) == 1
